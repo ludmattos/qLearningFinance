@@ -1,2 +1,2 @@
 # qLearningFinance
-Artigos sobre q-learning e portifólios financeiros
+Artigos sobre q-learning e portfólios financeiros
