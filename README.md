@@ -1,18 +1,12 @@
-# qLearningFinance
-Artigo sobre q-learning e portfólios financeiros.
+# qLearningFinance: Artigo sobre q-learning e portfólios financeiros.
 
 Este projeto prentende utilizar Q-Learning para criar uma máquina capaz de gerenciar portfolios de criptomoedas (Q-Trader). 
 
 
 Projeto overleaf
-
 Read Link:
 https://www.overleaf.com/13436608jhcdbzzmhcjz
 
-### Textbooks
-
-- [Analysis of Financial Time Series](http://eu.wiley.com/WileyCDA/WileyTitle/productCd-EHEP002380.html) by Ruey S. Tsay
-- [Paul Wilmott on Quantitative Finance](http://eu.wiley.com/WileyCDA/WileyTitle/productCd-1118836839.html) by Paul Wilmott
 
 ### Papers
 
@@ -31,7 +25,7 @@ https://www.overleaf.com/13436608jhcdbzzmhcjz
 - [The Self Learning Quant](https://hackernoon.com/the-self-learning-quant-d3329fcc9915)
 - [DEEP LEARNING IN FINANCE: LEARNING TO TRADE WITH Q-RL AND DQNS](https://chatbotslife.com/deep-learning-in-finance-learning-to-trade-with-q-rl-and-dqns-6c6cff4a1429)
 
-### Relevant Projects
+### Projetos relevantes
 
 - [TensorForce: A TensorFlow library for applied reinforcement learning](https://github.com/reinforceio/tensorforce)
 - [QLearning_Trading](https://github.com/ucaiado/QLearning_Trading)
