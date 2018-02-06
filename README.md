@@ -1,5 +1,5 @@
 # qLearningFinance
-Artigos sobre q-learning e portfólios financeiros
+Artigo sobre q-learning e portfólios financeiros
 
 
 Projeto overleaf:
@@ -8,7 +8,6 @@ https://www.overleaf.com/13436608jhcdbzzmhcjz
 
 ### Textbooks
 
-- [Recurrent Neural Networks for Prediction: Learning Algorithms, Architectures and Stability](http://eu.wiley.com/WileyCDA/WileyTitle/productCd-0471495174.html) by Danilo P. Mandic, Jonathon A. Chambers
 - [Analysis of Financial Time Series](http://eu.wiley.com/WileyCDA/WileyTitle/productCd-EHEP002380.html) by Ruey S. Tsay
 - [Paul Wilmott on Quantitative Finance](http://eu.wiley.com/WileyCDA/WileyTitle/productCd-1118836839.html) by Paul Wilmott
 
