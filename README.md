@@ -1,8 +1,11 @@
 # qLearningFinance
-Artigo sobre q-learning e portfólios financeiros
+Artigo sobre q-learning e portfólios financeiros.
+
+Este projeto prentende utilizar Q-Learning para criar uma máquina capaz de gerenciar portfolios de criptomoedas (Q-Trader). 
 
 
-Projeto overleaf:
+Projeto overleaf
+
 Read Link:
 https://www.overleaf.com/13436608jhcdbzzmhcjz
 
