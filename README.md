@@ -30,6 +30,7 @@ https://www.overleaf.com/13436608jhcdbzzmhcjz
 
 ### Relevant Projects
 
+- [TensorForce: A TensorFlow library for applied reinforcement learning](https://github.com/reinforceio/tensorforce)
 - [QLearning_Trading](https://github.com/ucaiado/QLearning_Trading)
 - [stockgym](https://github.com/sentrip/stockgym/tree/master/src)
 - [sl-quant](https://github.com/danielzak/sl-quant)
