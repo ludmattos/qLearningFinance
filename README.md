@@ -1,9 +1,11 @@
-# qLearningFinance: Artigo sobre q-learning e portfólios financeiros.
+# qLearningFinance:
+Artigo sobre q-learning e portfólios financeiros.
 
 Este projeto prentende utilizar Q-Learning para criar uma máquina capaz de gerenciar portfolios de criptomoedas (Q-Trader). 
 
 
 Projeto overleaf
+
 Read Link:
 https://www.overleaf.com/13436608jhcdbzzmhcjz
 
@@ -33,3 +35,9 @@ https://www.overleaf.com/13436608jhcdbzzmhcjz
 - [sl-quant](https://github.com/danielzak/sl-quant)
 - [Trading Gym](https://github.com/Prediction-Machines/Trading-Gym)
 - [DQN](https://github.com/jjakimoto/DQN)
+
+
+### TensorForce Bitcoin Trading Bot (Podcast)
+O cara tem um podcast sensacional sobre Machine Learning e ta desenvolvendo esse algo-trader deep reinforcement learning to automatically buy/sell/hold BTC based on price history. Ele explica tudo nos ultimos episódios do podcast (ta me ajudando muito): http://ocdevel.com/podcasts/machine-learning
+
+https://github.com/lefnire/tforce_btc_trader
