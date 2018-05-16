@@ -74,7 +74,7 @@ CalcReward <- function(action_0, action, t, tx = 0){
 
 
 learnEpisode <- function(s0, t_initial, t_final,
-                         epsilon, learning_rate, dicount, Q){
+                         epsilon, learning_rate, dicount, Q, tx=0){
   state <- s0 # set cursor to initial state
   action_0 <- 0 # initial action, nothing allocated
   for (t in (t_initial+1):t_final) {
@@ -85,7 +85,7 @@ learnEpisode <- function(s0, t_initial, t_final,
       action <- which.max(Q[state, ]) # pick first best action
     }
     # get reward from environment
-    response <- CalcReward(action_0, action, t)
+    response <- CalcReward(action_0, action, t, tx)
     # update rule for Q-learning
     Q[state, action] <- Q[state, action] + learning_rate *
       (response + dicount*max(Q[states[t], ]) - Q[state, action]) # colocar discount factor
@@ -97,7 +97,7 @@ learnEpisode <- function(s0, t_initial, t_final,
 
 
 Qlearning <- function(n, t_initial=1, t_final=1000, 
-                      epsilon, learning_rate, dicount) {
+                      epsilon, learning_rate, dicount, tx=0) {
   rew <- vector()
   s0 = states[t_initial] # First observable state
   # Initialize state-action function Q to zero
@@ -106,7 +106,7 @@ Qlearning <- function(n, t_initial=1, t_final=1000,
   # s11 <- vector()
   # Perform n episodes/iterations of Q-learning
   for (i in 1:n) {
-    Q <- learnEpisode(s0, t_initial, t_final, epsilon, learning_rate, dicount, Q)
+    Q <- learnEpisode(s0, t_initial, t_final, epsilon, learning_rate, dicount, Q, tx)
 
     rew_ <- vector(); state <- states[t_initial]; action_0 <- rep(0,3)
     for (t in 2:length(states)){ action <- which.max(Q[state, ])
@@ -125,23 +125,67 @@ Qlearning <- function(n, t_initial=1, t_final=1000,
 epsilon <- 0.1
 learning_rate <- 0.1
 dicount <- .2
+tx=.005
 #Calculate state-action function Q after 1000 episodes
 set.seed(0)
-Q <- Qlearning(10, 1, 3900, epsilon, learning_rate, dicount)
-(Q$Recompensas)
+Q <- Qlearning(100, 1, 3900, epsilon, learning_rate, dicount)
+# (Q$Recompensas)
 plot(ts(Q$Recompensas))
 
-rew <- vector()
-state <- states[1] # set cursor to initial state
-for (t in 2:length(states)) {
-  action_0 <- rep(0,3)
-  action <- which.max(Q$`Matriz Q`[state, ]) # pick first best action
-  rew[t-1] <- CalcReward(action_0, action, t)
-  state <- states[t] # move to next state
-  action_0 <- action
-}
-sum(rew) #*100
-plot(ts(cumsum(rew[3901:6066])))
+saveRDS(Q, "Matriz_Q.RDS")
+
+
+set.seed(0)
+Q_ <- Qlearning(100, 1, 3900, epsilon, learning_rate, dicount, tx)
+# (Q$Recompensas)
+plot(ts(Q_$Recompensas))
+
+saveRDS(Q_, "Matriz_Q_custo.RDS")
+
+
+# ----------------------------------------------------------------------------------------------------------
+# set.seed(0)
+# Q10 <- Qlearning(10000, 1, 3900, epsilon, learning_rate, dicount)
+# # (Q$Recompensas)
+# plot(ts(Q$Recompensas))
+# 
+# saveRDS(Q10, "Matriz_Q.RDS")
+# 
+# 
+# set.seed(0)
+# Q_10 <- Qlearning(10000, 1, 3900, epsilon, learning_rate, dicount, tx)
+# # (Q$Recompensas)
+# plot(ts(Q$Recompensas))
+
+saveRDS(Q_10, "Matriz_Q_custo.RDS")
+# ----------------------------------------------------------------------------------------------------------
+
+# ================================================================================================ #
+library(mailR)
+sender <- "unb.rafa@gmail.com" # Replace with a valid address
+recipients <- c("rafa.unb.2012@gmail.com") # Replace with one or more valid addresses
+email <- send.mail(from = sender,
+                   to = recipients, subject="Q-LEARNING",
+                   body = "Body of the email",
+                   smtp = list(host.name = "aspmx.l.google.com", port = 25),
+                   authenticate = FALSE,
+                   send = T,
+                   attach.files = list.files(pattern = "*.RDS"),
+                   debug = T)
+# ================================================================================================ #
+
+
+# rew <- vector()
+# state <- states[1] # set cursor to initial state
+# for (t in 2:length(states)) {
+#   action_0 <- rep(0,3)
+#   action <- which.max(Q$`Matriz Q`[state, ]) # pick first best action
+#   rew[t-1] <- CalcReward(action_0, action, t)
+#   state <- states[t] # move to next state
+#   action_0 <- action
+# }
+# sum(rew) #*100
+# plot(ts(cumsum(rew[3901:6066])))
 
 plot(ts(cumsum(rew)))
 
