@@ -1,7 +1,8 @@
 # =========================================================== #
 # ===      Q learning for portifolio selection            === #
 # =========================================================== #
-# 03/05/2018
+# 15/05/2018
+rm(list = ls())
 library(tidyverse)
 
 # Proporção a ser alocada, AÇÕES DO MODELO
@@ -17,10 +18,10 @@ actions <- actions %>% mutate(LTC = round(1 - (BTC + ETH), digits = 2)) %>%
 # uma combinação da informação se o retorno foi negativo ou não, por ser dois ativos
 # isto gerou 4 estados. Mas e se eu considerasse uma informação de qual ativo foi o 
 # maior? e etc... Qual a consequência de se ter muitos estados?
-coins <- readRDS("Coins.RDS")
-coins <- coins[c("Time","BTC","LTC","ETH")] %>% gather(Coin, Close, -Time) %>%
+coins <- readRDS("Coins.RDS") 
+coins <- coins[c("Time","BTC","LTC","ETH")] %>% na.omit() %>% gather(Coin, Close, -Time) %>%
   group_by(Coin) %>%
-  mutate(Retorno = (Close - lag(Close))/lag(Close))  ##################
+  mutate(Retorno = (Close - lag(Close))/lag(Close))   ##################
 
 states <- na.omit(coins) %>% mutate(state = case_when(Retorno >0 ~ "up",
                                                       TRUE       ~ "down")) %>%
@@ -61,14 +62,21 @@ n_action <- actions %>% transmute(paste(BTC, ETH, LTC, sep = "-")) %>% .[,1]
 n_state <- unique(states)
 
 # retorna a recompensa do retorno associado a ação no tempo t
-CalcReward <- function(action, t){
-  r <- sum(reward[t,2:4]*actions[action,])
+# taxa de transação igual a 1%
+CalcReward <- function(action_0, action, t, tx = 0){
+  if(sum(action_0) == 0){action_0 <- rep(0,3)
+  }else action_0 <- actions[action_0,]
+  trans <- actions[action,] - action_0
+  r <- sum(reward[t,2:4] * actions[action,] - tx*unlist(ifelse(trans > 0, trans, 0)) )
   return(r)
 }
 
+
+
 learnEpisode <- function(s0, t_initial, t_final,
-                         epsilon, learning_rate, dicount, Q){
+                         epsilon, learning_rate, dicount, Q, tx=0){
   state <- s0 # set cursor to initial state
+  action_0 <- 0 # initial action, nothing allocated
   for (t in (t_initial+1):t_final) {
     # epsilon-greedy action selection
     if (runif(1) <= epsilon) {
@@ -77,10 +85,11 @@ learnEpisode <- function(s0, t_initial, t_final,
       action <- which.max(Q[state, ]) # pick first best action
     }
     # get reward from environment
-    response <- CalcReward(action, t)
+    response <- CalcReward(action_0, action, t, tx)
     # update rule for Q-learning
     Q[state, action] <- Q[state, action] + learning_rate *
       (response + dicount*max(Q[states[t], ]) - Q[state, action]) # colocar discount factor
+    action_0 <- action
     state <- states[t] # move to next state
   }
   return(Q)
@@ -88,7 +97,8 @@ learnEpisode <- function(s0, t_initial, t_final,
 
 
 Qlearning <- function(n, t_initial=1, t_final=1000, 
-                      epsilon, learning_rate, dicount) {
+                      epsilon, learning_rate, dicount, tx=0) {
+  rew <- vector()
   s0 = states[t_initial] # First observable state
   # Initialize state-action function Q to zero
   Q <- matrix(0, nrow=length(n_state), ncol=length(n_action),
@@ -96,39 +106,95 @@ Qlearning <- function(n, t_initial=1, t_final=1000,
   # s11 <- vector()
   # Perform n episodes/iterations of Q-learning
   for (i in 1:n) {
-    Q <- learnEpisode(s0, t_initial, t_final, epsilon, learning_rate, dicount, Q)
-    # s11[i] <- max(Q[1,])
-    # Q <- Q/rowSums(Q)
+    Q <- learnEpisode(s0, t_initial, t_final, epsilon, learning_rate, dicount, Q, tx)
+
+    rew_ <- vector(); state <- states[t_initial]; action_0 <- rep(0,3)
+    for (t in 2:length(states)){ action <- which.max(Q[state, ])
+      rew_[t-1] <- CalcReward(action_0, action, t)
+      state <- states[t]; action_0 <- action
+      
+      rew[i] <- sum(rew_)
+    }
   }
-  return(Q)
+  
+  return(list(`Matriz Q` = Q, `Recompensas` = rew))
 }
 
 
 #Choose learning parameters
 epsilon <- 0.1
 learning_rate <- 0.1
-dicount <- .5
+dicount <- .2
+tx=.005
 #Calculate state-action function Q after 1000 episodes
 set.seed(0)
-Q <- Qlearning(3, 1, 3900, epsilon, learning_rate, dicount)
-# Q
-# n_action[apply(Q, 1, which.max)]
+Q <- Qlearning(100, 1, 3900, epsilon, learning_rate, dicount)
+# (Q$Recompensas)
+plot(ts(Q$Recompensas))
 
-rew <- vector()
-state <- states[1] # set cursor to initial state
-for (t in 2:length(states)) {
-    action <- which.max(Q[state, ]) # pick first best action
-  # get reward from environment
-  rew[t-1] <- CalcReward(action, t)
-  state <- states[t] # move to next state
-}
-sum(rew)*100
+saveRDS(Q, "Matriz_Q.RDS")
+
+
+set.seed(0)
+Q_ <- Qlearning(100, 1, 3900, epsilon, learning_rate, dicount, tx)
+# (Q$Recompensas)
+plot(ts(Q_$Recompensas))
+
+saveRDS(Q_, "Matriz_Q_custo.RDS")
+
+
+# ----------------------------------------------------------------------------------------------------------
+# set.seed(0)
+# Q10 <- Qlearning(10000, 1, 3900, epsilon, learning_rate, dicount)
+# # (Q$Recompensas)
+# plot(ts(Q$Recompensas))
+# 
+# saveRDS(Q10, "Matriz_Q.RDS")
+# 
+# 
+# set.seed(0)
+# Q_10 <- Qlearning(10000, 1, 3900, epsilon, learning_rate, dicount, tx)
+# # (Q$Recompensas)
+# plot(ts(Q$Recompensas))
+
+saveRDS(Q_10, "Matriz_Q_custo.RDS")
+# ----------------------------------------------------------------------------------------------------------
+
+# ================================================================================================ #
+library(mailR)
+sender <- "unb.rafa@gmail.com" # Replace with a valid address
+recipients <- c("rafa.unb.2012@gmail.com") # Replace with one or more valid addresses
+email <- send.mail(from = sender,
+                   to = recipients, subject="Q-LEARNING",
+                   body = "Body of the email",
+                   smtp = list(host.name = "aspmx.l.google.com", port = 25),
+                   authenticate = FALSE,
+                   send = T,
+                   attach.files = list.files(pattern = "*.RDS"),
+                   debug = T)
+# ================================================================================================ #
+
+
+# rew <- vector()
+# state <- states[1] # set cursor to initial state
+# for (t in 2:length(states)) {
+#   action_0 <- rep(0,3)
+#   action <- which.max(Q$`Matriz Q`[state, ]) # pick first best action
+#   rew[t-1] <- CalcReward(action_0, action, t)
+#   state <- states[t] # move to next state
+#   action_0 <- action
+# }
+# sum(rew) #*100
+# plot(ts(cumsum(rew[3901:6066])))
+
 plot(ts(cumsum(rew)))
+
+sum((rew[3901:6066]))
 
 saveRDS(Q, "MatrizQ.RDS")
 #Optimal policy
 # note: problematic for states with ties
-n_action[max.col(Q)]
+n_action[max.col(Q$`Matriz Q`)]
 
 # ======================================= Base comparativa ======================================= #
 base <- na.omit(coins) %>% filter(Time>="2017-05-19") %>% group_by(Coin) %>% mutate(ret_acum = cumsum(Retorno))
@@ -139,6 +205,8 @@ ggplot(base, aes(x=Time, y=ret_acum, group=Coin, colour=Coin)) + geom_line() +
   theme(legend.position="bottom") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(text = element_text(size=15))
+
+ETH <- filter(base, Coin == "ETH") %>% ungroup() %>% select(Retorno) %>% unlist()
 # ================================================================================================ #
 
 set.seed(0)
@@ -230,10 +298,59 @@ data$Time <- anytime::anytime(data$Time)
 
 
 data <- data %>% gather(iter, rew, -Time) %>% mutate()
-ggplot(data, aes(x=Time, y=rew, group=iter, colour=iter)) + geom_line(lwd=1) +
+ggplot(data, aes(x=Time, y=rew, group=iter, colour=iter)) + geom_line() +
   theme_bw() + scale_colour_discrete(name="Número de Iterações",
                                      labels=c("1", "1000", "5000","10000")) +  
   xlab("Ano")+ ylab("Retorno Acumulado") +
   theme(legend.position="bottom") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(text = element_text(size=15))
+# =======================================================================
+rew_1 <- vector();state <- states[1]; for (t in 2:length(states)) { action <- which.max(Q1[state, ])
+rew_1[t-1] <- CalcReward(action, t); state <- states[t] }
+
+rew_2 <- vector();state <- states[1];for (t in 2:length(states)) { action <- which.max(Q2[state, ])
+rew_2[t-1] <- CalcReward(action, t); state <- states[t] }
+
+rew_3 <- vector();state <- states[1];for (t in 2:length(states)) { action <- which.max(Q3[state, ])
+rew_3[t-1] <- CalcReward(action, t); state <- states[t] }
+
+rew_4 <- vector();state <- states[1];for (t in 2:length(states)) { action <- which.max(Q4[state, ])
+rew_4[t-1] <- CalcReward(action, t); state <- states[t] }
+
+rew_5 <- vector();state <- states[1];for (t in 2:length(states)) { action <- which.max(Q5[state, ])
+rew_5[t-1] <- CalcReward(action, t); state <- states[t] }
+
+rewc_1 <- cumsum(rew_1)
+rewc_2 <- cumsum(rew_2)
+rewc_3 <- cumsum(rew_3)
+rewc_4 <- cumsum(rew_4)
+rewc_5 <- cumsum(rew_5)
+
+
+data_ <- data.frame(cbind(Time = (coins$Time[1:(length(states)-1)]),
+                         rewc_1,rewc_3,rewc_4,rewc_5))
+
+data_$Time <- anytime::anytime(data_$Time) 
+# data$Time <- lubridate::floor_date(data$Time , '3 hours')
+
+data_ <- data_ %>% gather(iter, rew, -Time) %>% mutate()
+ggplot(data_, aes(x=Time, y=rew, group=iter, colour=iter)) + geom_line() +
+  theme_bw() + scale_colour_discrete(name="Número de Iterações",
+                                     labels=c("1", "1000", "5000","10000")) +  
+  xlab("Ano")+ ylab("Retorno Acumulado") +
+  theme(legend.position="bottom") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(text = element_text(size=15))
+
+# ======================================= Base comparativa ======================================= #
+base_ <- na.omit(coins) %>% group_by(Coin) %>% mutate(ret_acum = cumsum(Retorno))
+ggplot(base_, aes(x=Time, y=ret_acum, group=Coin, colour=Coin)) + geom_line() +
+  theme_bw() + scale_colour_discrete(name="Criptomoeda",
+                                     labels=c("Bitcoin", "Ethereum", "Litcoin")) +  
+  xlab("Ano") + ylab("Preço de Fechamento") +
+  theme(legend.position="bottom") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(text = element_text(size=15))
+# ================================================================================================ #
+
