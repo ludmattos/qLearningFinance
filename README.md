@@ -1,4 +1,4 @@
-# qLearningFinance:
+﻿# qLearningFinance:
 Artigo sobre q-learning e portfólios financeiros.
 
 Neste projeto prentendemos utilizar Q-Learning para criar uma máquina capaz de gerenciar portfolios de criptomoedas (Q-Trader). 
@@ -29,6 +29,7 @@ https://www.overleaf.com/13436608jhcdbzzmhcjz
 
 ### Projetos relevantes
 
+- [Se isso daqui não for o estado da arte, não sei o que é!](https://github.com/ZhengyaoJiang/PGPortfolio)
 - [TensorForce: A TensorFlow library for applied reinforcement learning](https://github.com/reinforceio/tensorforce)
 - [QLearning_Trading](https://github.com/ucaiado/QLearning_Trading)
 - [stockgym](https://github.com/sentrip/stockgym/tree/master/src)

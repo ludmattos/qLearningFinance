@@ -1,0 +1,36 @@
+Segue uma proposta de roteiro de atividades:
+
+* Para a seção de referencial teórico, buscar mais referências recentes (2009 em diante, priorizando 2013 em diante) das seguintes categorias (cada uma pode virar uma subseção do trabalho):
+
+1) Uso de machine learning em finanças (geral): +/- 20 artigos
+2) Uso de reinforcement learning em finanças (geral): +/- 10 artigos
+3) Uso de reinforcement learning em alocação de portfolios: quantos artigos você conseguir achar
+
+Para cada artigo, faça um resumo de 2 a 4 parágrafos para cada artigo contendo: objetivo, método usado, descrição dos dados, período de análise, testes estatísticos (caso existam) e principais conclusões.
+
+* Adicionar uma seção sobre blockchain e criptomoedas, discutindo:
+1) Definição de blockchain; use figuras e exemplos
+2) Aplicações de blockchain em administração
+3) Definição e importância das criptomoedas: evolução da "riqueza" e como o campo de estudos "finanças" pode mudar com o "dinheiro digital"
+4) Discutir as diferenças entre as várias criptomoedas (Bitcoin, Ethereum, Dash, Monero, Litecoin, etc.)
+5) Discutir os fatos estilizados de finanças em criptomoedas: inclua gráficos de preço, retorno e volatilidade
+
+* Adicionar uma seção sobre modelos de seleção de portfolios, definindo o modelo matemático de cada um, explicando as diferenças conceituais de cada um para o modelo de Markowitz e citando artigos que aplicaram. Comece com esses: (depois faça uma pesquisa e veja outros)
+1) Markowitz: Esse precisa ficar destrinchado, tem muito material na Internet que abre esse modelo com detalhes
+2) Black-Litterman
+3) Treynor-Black
+4) Abordagens da chamada "Post-modern portfolio theory", como Stochastic portfolio theory, Maslowian portfolio theory, Universal portfolios, entre outros
+
+* Com base na seção anterior, definir uma lista de benchmarks para comparar com o modelo do Q-Learning, a ideia é que cada modelo seja um benchmark diferente, além do random walk e do "portfolio 1/n"
+
+* Na seção de método, descrever:
+1) Tipos de machine learning; basicamente um resumo daqui (https://lamfo-unb.github.io/2017/07/27/tres-tipos-am/)
+2) Intuição do reinforcement learning e o paralelo com a psicologia behaviorista ("cão de Pavlov")
+3) Definir o que é "programação dinâmica", citar exemplos de artigos (tem muito uso disso em macroeconomia e finanças corporativas)
+4) Apresentar a Equação de Bellmann e as condições de otimalidade de um problema de programação dinâmica
+5) Definir reinforcement learning como caso geral da programação dinâmica
+6) Definir Q-learning como um caso específico do reinforcement learning, colocando as equações e discutindo a relação com os tópicos anteriores
+
+* Escolher lista de criptomoedas para testar o modelo: só 3 moedas não bastam, faça uma lista maior das mais relevantes
+
+* Pesquisar métricas de avaliação e testes de hipóteses usados por artigos recentes em aplicações de portfolio
